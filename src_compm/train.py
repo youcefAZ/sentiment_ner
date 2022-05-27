@@ -68,7 +68,7 @@ def get_datasets() :
     return dev_dataset,train_dataset,test_dataset
 
 logger = logging.getLogger(__name__)
-save_path='models\\model_compm'
+save_path='models'
 
 
 def fit_model(lr_opt=1e-6,steps=10000,nb_loops=5,eval_average='weighted') :

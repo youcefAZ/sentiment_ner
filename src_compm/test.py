@@ -40,7 +40,7 @@ def main():
     for dataset, DATA_loader in zip(dataset_list, DATA_loader_list):
         data_path = os.path.join('data/dataset', dataset, dataType)
 
-        save_path = 'models\\model_compm'
+        save_path = 'models'
         print("###Save Path### ", save_path)
     
         dev_path = os.path.join(data_path, dataset+'_dev.txt')
