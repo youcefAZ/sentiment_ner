@@ -1,0 +1,4 @@
+outs:
+- md5: 6e6ad005e5783d65610b71209302eed4
+  size: 895019035
+  path: model.bin
