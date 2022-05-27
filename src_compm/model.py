@@ -8,7 +8,7 @@ class PFE_model(nn.Module) :
     def __init__(self):
         super(PFE_model,self).__init__()
 
-        self.gpu = False
+        self.gpu = True
         
         self.context_model=BertModel.from_pretrained('bert-base-cased')
         self.speaker_model = BertModel.from_pretrained('bert-base-cased')
@@ -37,7 +37,7 @@ class PFE_model(nn.Module) :
             if speaker_tokens.shape[0] == 0:
                 speaker_track_vector = torch.zeros(1, self.hiddenDim).cuda()
             else:
-                speaker_output = self.speaker_model(speaker_tokens).last_hidden_state[:,0,:].cuda() # (speaker_utt_num, 1024)
+                speaker_output = self.speaker_model(speaker_tokens.cuda()).last_hidden_state[:,0,:] # (speaker_utt_num, 1024)
                 speaker_output = speaker_output.unsqueeze(1) # (speaker_utt_num, 1, 1024)
                 speaker_GRU_output, _ = self.speakerGRU(speaker_output, self.h0) # (speaker_utt_num, 1, 1024) <- (seq_len, batch, output_size)
                 speaker_track_vector = speaker_GRU_output[-1,:,:] # (1, 1024)
