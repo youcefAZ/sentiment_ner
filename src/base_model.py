@@ -4,6 +4,7 @@ from transformers import TFBertModel,BertTokenizer
 import pandas as pd
 import numpy as np
 from numpy import array
+import time
 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import CategoricalCrossentropy
@@ -45,12 +46,16 @@ class BASE_SENTIMENT_MODEL():
         target_data=np.concatenate((y_train, y_test))
 
         # Define the K-fold Cross Validator
-        kfold = KFold(n_splits=4, shuffle=True)
+        kfold = KFold(n_splits=5, shuffle=True)
 
         # K-fold Cross Validation model evaluation
         fold_no = 1
         print("begin training")
 
+        results=[]
+        time_elapsed=[]
+
+        start = time.time()
         for train, test in kfold.split(full_data['review']):
             # Generate a print
             print('------------------------------------------------------------------------')
@@ -64,11 +69,15 @@ class BASE_SENTIMENT_MODEL():
             train_history=self.fit_model(x_train,x_test,y_train,y_test)
             # Increase fold number
             fold_no = fold_no + 1
+            print("predicting..")
+            metrics=self.predict_test_data()
+            results.append(metrics)
+            end=time.time()
+            elapsed=(end-start)
+            time_elapsed.append(elapsed)
         
-        print("predicting..")
-        self.predict_test_data(self.test_path,self.model,self.result_path)
-
         # save
+        self.save_results(results)
         self.model.save_weights(self.save_path)
 
 
@@ -225,7 +234,7 @@ class BASE_SENTIMENT_MODEL():
         y_true = self.original_sentiment(y_test)
 
         results=classification_report(y_true, y_predicted,target_names=self.encoded_dict.keys(),output_dict=True)
-        self.save_results(results)
+        return results
 
 
     def save_results(self,results) :
